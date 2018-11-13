@@ -10,7 +10,6 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/index.js",
       "runtimeArgs": [
-        "-r", "esm"
       ]
     }
   ]

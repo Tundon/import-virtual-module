@@ -1,6 +1,7 @@
-export { Deferred } from './ext'
+const { Deferred } = require('./ext')
 
-export 
 class RealNumber {
 
 }
+
+module.exports = { Deferred, RealNumber }

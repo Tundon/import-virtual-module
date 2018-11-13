@@ -1,8 +1,7 @@
 // const requireFromString = require('require-from-string')
 
-import Module from 'module'
-import path from 'path'
-import assert from 'assert'
+const Module = require('module')
+const path = require('path')
 
 function requireFromString(code, filename, opts) {
   if (typeof filename === 'object') {
@@ -22,12 +21,14 @@ function requireFromString(code, filename, opts) {
 
 	var paths = Module._nodeModulePaths(path.dirname(filename));
 
-	var parent = module.parent;
+	var parent = module;
 	var m = new Module(filename, parent);
 	m.filename = filename;
 	m.paths = [].concat(opts.prependPaths).concat(paths).concat(opts.appendPaths);
   m._compile(code, filename);
-  m.loaded = true
+	m.loaded = true
+	
+	Module._cache[m.id] = m
 
 	// var exports = m.exports;
 	parent && parent.children && parent.children.splice(parent.children.indexOf(m), 1);
@@ -36,9 +37,9 @@ function requireFromString(code, filename, opts) {
 }
 
 let module1 = requireFromString(`
-export { sep } from 'path'
-export class Empty {}
-export { RealNumber } from '../src/real.js'
+const { sep } = require('path')
+class Empty {}
+const { RealNumber } = require('../src/real.js')
 `, 
 path.join(__dirname, 'virtuals/module1.js'))
 // './virtuals/module1.js')
@@ -46,7 +47,7 @@ path.join(__dirname, 'virtuals/module1.js'))
 console.log(module1.exports)
 
 let module2 = requireFromString(`
-export { Empty } from './module1.js'
+const { Empty, RealNumber } = require('./module1.js')
 `, 
 path.join(__dirname, 'virtuals/module2.js'))
 // './virtuals/module2.js')
